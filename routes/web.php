@@ -28,7 +28,7 @@ Route::get('/about', AboutContoller::class);
 
 
 Route::resource('posts', PostController::class)
-    ->only(['index', 'show']);
+    ->only(['index', 'show', 'create', 'store']);
 
 
 Route::get('/recent-posts/{days_age?}', function ($daysAgo = 20) {

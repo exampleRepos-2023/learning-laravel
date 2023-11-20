@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
 
@@ -17,14 +18,21 @@ class PostController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        //
+        return view('posts.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        //
+    public function store(StorePost $request) {
+
+        $validated = $request->validated();
+
+        $post = BlogPost::create($validated);
+
+        $request->session()->flash('status', 'The blog post was created!');
+
+        return redirect()->route('posts.show', ['post' => $post->id]);
     }
 
     /**
