@@ -39,8 +39,6 @@ class PostController extends Controller {
      * Display the specified resource.
      */
     public function show(string $id) {
-        // abort_if(!array_key_exists($id, BlogPost::all()->keyBy('id')->keys()->toArray()), 404);
-
         return view('posts.show', [
             'post' => BlogPost::findOrFail($id),
         ]);
@@ -50,20 +48,32 @@ class PostController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(string $id) {
-        //
+        return view('posts.edit', [
+            'post' => BlogPost::findOrFail($id),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id) {
-        //
+    public function update(StorePost $request, string $id) {
+        $post = BlogPost::findOrFail($id);
+        $validated = $request->validated();
+        $post->fill($validated);
+        $post->save();
+
+        $request->session()->flash('status', 'The blog post was updated!');
+        return redirect()->route('posts.show', ['post' => $post->id]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id) {
-        //
+        $post = BlogPost::findOrFail($id);
+        $post->delete();
+
+        session()->flash('status', 'The blog post was deleted!');
+        return redirect()->route('posts.index');
     }
 }

@@ -28,27 +28,9 @@ Route::get('/about', AboutContoller::class);
 
 
 Route::resource('posts', PostController::class)
-    ->only(['index', 'show', 'create', 'store']);
+    ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
 
 
 Route::get('/recent-posts/{days_age?}', function ($daysAgo = 20) {
     return 'Post from ' . $daysAgo . ' days ago';
 })->name('posts.recent.index');
-
-
-// Route::get('/fun/responses', function () use ($posts) {
-//     return response($posts, 200, [
-//         'Content-Type' => 'application/json',
-//     ])->cookie('foo', 'bar', 3600);
-// })->name('fun.responses');
-
-
-
-// Route::get('/fun/json', function () use ($posts) {
-//     return response()->json($posts);
-// });
-
-// Route::get('/fun/download', function () {
-//     return response()
-//         ->download(public_path('/daniel.jpg'), 'face.jpg');
-// });
