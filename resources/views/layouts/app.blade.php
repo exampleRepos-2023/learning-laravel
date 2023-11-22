@@ -14,9 +14,9 @@
         <h5 class="my-0 me-auto fw-bolder">Laravel Learning</h5>
         <nav class="my-2 my-md-0 mb-md-2">
             <a class="p-2 text-dark" href="{{ route('home.index') }}">Home</a>
-            <a class="p-2 text-dark href="{{ route('home.contact') }}">Contact</a>
-            <a class="p-2 text-dark href="{{ route('posts.index') }}">Blog Posts</a>
-            <a class="p-2 text-dark href="{{ route('posts.create') }}">Add Post</a>
+            <a class="p-2 text-dark" href="{{ route('home.contact') }}">Contact</a>
+            <a class="p-2 text-dark" href="{{ route('posts.index') }}">Blog Posts</a>
+            <a class="p-2 text-dark" href="{{ route('posts.create') }}">Add Post</a>
         </nav>
     </div>
     <div class="container">

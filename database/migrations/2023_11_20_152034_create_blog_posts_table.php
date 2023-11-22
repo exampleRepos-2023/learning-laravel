@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
 
-            $table->string('title');
-            $table->text('content');
+            $table->string('title')->default('');
+            $table->text('content')->default('');
 
         });
     }
