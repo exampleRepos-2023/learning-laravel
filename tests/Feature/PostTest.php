@@ -3,20 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\BlogPost;
+use App\Models\Comment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PostTest extends TestCase {
     use RefreshDatabase;
 
     private function createDummyBlogPost(): BlogPost {
-        $post = new BlogPost();
-        $post->title = 'My title';
-        $post->content = 'My content';
-        $post->save();
-
-        return $post;
+        return BlogPost::factory()->myTitle()->create();
     }
 
     public function testNoBlogPostWhenNothingInDatabase(): void {
@@ -25,7 +20,7 @@ class PostTest extends TestCase {
         $response->assertSeeText('There are no posts');
     }
 
-    public function testBlogPostWhenSomethingInDatabase(): void {
+    public function testBlogPostWhenSomethingIn1Database(): void {
         // Arrange
         $post = $this->createDummyBlogPost();
 
@@ -34,10 +29,20 @@ class PostTest extends TestCase {
 
         // Assert
         $response->assertSeeText('My title');
+        // $response->assertSeeText('No comments yet');
 
         $this->assertDatabaseHas('blog_posts', [
             'title' => 'My title',
         ]);
+    }
+
+    public function testSee1BlogPostWithComments(): void {
+        $post = $this->createDummyBlogPost();
+        Comment::factory(4)->create(['blog_post_id' => $post->id]);
+
+        $response = $this->get('/posts');
+
+        $response->assertSeeText('4 comments');
     }
 
     public function testBlogPostCanBeStored(): void {
@@ -105,4 +110,6 @@ class PostTest extends TestCase {
 
         $this->assertDatabaseMissing('blog_posts', $post->toArray());
     }
+
+
 }

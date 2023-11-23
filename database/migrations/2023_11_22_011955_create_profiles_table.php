@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->unsignedInteger('author_id')->unique();
-            $table->foreign('author_id')->references('id')->on('authors');
+            $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
         });
     }
 

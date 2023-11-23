@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller {
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        return view('posts.index', ['posts' => BlogPost::orderBy('created_at', 'desc')->take(5)->get()]);
+        return view('posts.index', ['posts' => BlogPost::withCount('comments')->get()]);
     }
 
     /**
@@ -40,7 +40,7 @@ class PostController extends Controller {
      */
     public function show(string $id) {
         return view('posts.show', [
-            'post' => BlogPost::findOrFail($id),
+            'post' => BlogPost::with('comments')->findOrFail($id),
         ]);
     }
 
