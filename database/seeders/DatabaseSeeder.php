@@ -7,6 +7,7 @@ use App\Models\Author;
 use App\Models\BlogPost;
 use App\Models\Comment;
 use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
@@ -24,7 +25,23 @@ class DatabaseSeeder extends Seeder {
         // ]);
         // Comment::factory(1)->create(['blog_post_id' => 1]);
         // Author::factory(1)->create();
-        Author::factory(1)->has(Profile::factory())->create();
-        BlogPost::factory(1)->has(Comment::factory($commentCount))->create();
+        // $posts = BlogPost::factory(20)->has(Comment::factory($commentCount))->create();
+
+        if ($this->command->confirm('Do you want to refresh the database?', true)) {
+            $this->command->call('migrate:refresh');
+            $this->command->info('Database was refreshed!');
+        }
+
+        $users = User::factory(20)->create();
+        // Author::factory(20)->has(Profile::factory())->create();
+        $posts = BlogPost::factory(50)->make()->each(function ($post) use ($users) {
+            $post->user_id = $users->random()->id;
+            $post->save();
+        });
+
+        $comments = Comment::factory(150)->make()->each(function ($comment) use ($posts) {
+            $comment->blog_post_id = $posts->random()->id;
+            $comment->save();
+        });
     }
 }
