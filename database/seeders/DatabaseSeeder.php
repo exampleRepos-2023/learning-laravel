@@ -31,9 +31,12 @@ class DatabaseSeeder extends Seeder {
             $this->command->call('migrate:refresh');
             $this->command->info('Database was refreshed!');
         }
-
-        $users = User::factory(20)->create();
         // Author::factory(20)->has(Profile::factory())->create();
+
+        User::factory()->adminNeco()->create();
+        User::factory(20)->create();
+        $users = User::all();
+
         $posts = BlogPost::factory(50)->make()->each(function ($post) use ($users) {
             $post->user_id = $users->random()->id;
             $post->save();

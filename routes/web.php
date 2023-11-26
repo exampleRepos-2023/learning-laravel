@@ -28,6 +28,10 @@ Route::get('/', [HomeController::class, 'home'])
 Route::get('/contact', [HomeController::class, 'contact'])
     ->name('home.contact');
 
+Route::get('/secret', [HomeController::class, 'secret'])
+    ->middleware('can:home.secret')
+    ->name('secret');
+
 // Define a route for the about page with the AboutController as the callback function
 Route::get('/about', AboutContoller::class);
 
