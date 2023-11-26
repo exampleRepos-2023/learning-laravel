@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller {
     public function home() {
         // dd(Auth::id());
-        return view('home.index');
+        return view('home');
     }
 
     public function contact() {
-        return view('home.contact');
+        return view('contact');
     }
 }

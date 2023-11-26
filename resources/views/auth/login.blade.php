@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layout')
 
 @section('content')
     <form class="grid gap-3" action="{{ route('login') }}" method="post">
