@@ -4,29 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
+use App\Models\User;
 use Gate;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller {
 
 
+    /**
+     * Construct a new instance of the class.
+     *
+     * This method is called when a new object of the class is created.
+     * It sets up the necessary middleware for the routes.
+     * The middleware is applied only to the specified actions:
+     * create, store, edit, update, and destroy.
+     * The 'auth' middleware ensures that the user is authenticated before accessing these actions.
+     */
     public function __construct() {
         $this->middleware('auth')
             ->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
-
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        return view('posts.index', ['posts' => BlogPost::withCount('comments')->get()]);
+        return view('posts.index', [
+            'posts' => BlogPost::withCount('comments')->latest()->get(),
+            'mostCommented' => BlogPost::mostCommented()->take(5)->get(),
+            'mostActive' => User::withMostBlogPosts()->take(5)->get(),
+            'mostActiveLastMonth' => User::withMostBlogPostsLastMonth()->take(5)->get(),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create() {
-        // $this->authorize('posts.create');
         return view('posts.create');
     }
 
@@ -36,6 +50,7 @@ class PostController extends Controller {
     public function store(StorePost $request) {
 
         $validatedData = $request->validated();
+        $validatedData['user_id'] = $request->user()->id;
 
         $post = BlogPost::create($validatedData);
 
@@ -48,9 +63,13 @@ class PostController extends Controller {
      * Display the specified resource.
      */
     public function show(string $id) {
-        return view('posts.show', [
-            'post' => BlogPost::with('comments')->findOrFail($id),
-        ]);
+        // $post = BlogPost::with(['comments' => function ($query) {
+        //     $query->latest();
+        // }])->findOrFail($id);
+
+        $post = BlogPost::with('comments')->findOrFail($id);
+
+        return view('posts.show', ['post' => $post]);
     }
 
     /**
