@@ -9,6 +9,7 @@ use App\Models\Comment;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Cache;
 
 class DatabaseSeeder extends Seeder {
     /**
@@ -31,6 +32,9 @@ class DatabaseSeeder extends Seeder {
             $this->command->call('migrate:refresh');
             $this->command->info('Database was refreshed!');
         }
+        // clear the cache
+        Cache::tags(['blog-post'])->flush();
+
         // Author::factory(20)->has(Profile::factory())->create();
 
         User::factory()->adminNeco()->create();

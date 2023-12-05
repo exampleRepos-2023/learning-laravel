@@ -29,19 +29,21 @@
                 </p>
 
                 <div class="mb-3">
-                    @if (!$post->trashed())
-                        @can('update', $post)
-                            <a class="btn btn-primary" href="{{ route('posts.edit', ['post' => $post->id]) }}">Edit</a>
-                        @endcan
+                    @auth
+                        @if (!$post->trashed())
+                            @can('update', $post)
+                                <a class="btn btn-primary" href="{{ route('posts.edit', ['post' => $post->id]) }}">Edit</a>
+                            @endcan
 
-                        @can('delete', $post)
-                            <form action="{{ route('posts.destroy', ['post' => $post->id]) }}" class="d-inline" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <input class="btn btn-primary" type="submit" value="Delete">
-                            </form>
-                        @endcan
-                    @endif
+                            @can('delete', $post)
+                                <form action="{{ route('posts.destroy', ['post' => $post->id]) }}" class="d-inline" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input class="btn btn-primary" type="submit" value="Delete">
+                                </form>
+                            @endcan
+                        @endif
+                    @endauth
                 </div>
             @empty
                 <div>There are no posts</div>

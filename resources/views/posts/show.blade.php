@@ -16,6 +16,7 @@
     <x-updated date="{{ $post->created_at->diffForHumans() }}" name="{{ $post->user->name }}"></x-updated>
     <x-updated date="{{ $post->updated_at->diffForHumans() }}">Updated</x-updated>
 
+    <p>Curretly read by {{ $counter }} people</p>
     <h4>Comments</h4>
 
     @forelse ($post->comments as $comment)
