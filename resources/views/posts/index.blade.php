@@ -17,9 +17,8 @@
                 </h3>
                 <p>{{ $post->content }}</p>
 
-                <p>Added {{ $post->created_at->diffForHumans() }}
-                    by {{ $post->user->name }}
-                </p>
+                <x-updated date="{{ $post->created_at->diffForHumans() }}" name="{{ $post->user->name }}">
+                </x-updated>
 
                 @if ($post->comments_count)
                     <strong>{{ $post->comments_count }} comments</strong>
@@ -36,7 +35,7 @@
                         @endcan
 
                         @can('delete', $post)
-                            <form class="d-inline" action="{{ route('posts.destroy', ['post' => $post->id]) }}" method="POST">
+                            <form action="{{ route('posts.destroy', ['post' => $post->id]) }}" class="d-inline" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <input class="btn btn-primary" type="submit" value="Delete">
@@ -51,48 +50,28 @@
         <div class="col-4">
             <div class="container">
                 <div class="row">
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Most commented</h5>
-                            <h6 class="card-subtitle text-muted mt-2">What people are currently talking about</h6>
-                        </div>
-                        <ul class="list-group list-group-flush">
+                    <x-card title="Most commented" subtitle="What people are currently talking about">
+                        @slot('items')
                             @foreach ($mostCommented as $post)
                                 <li class="list-group-item text-truncate">
                                     <a class="text-decoration-none" href="{{ route('posts.show', ['post' => $post->id]) }}">
-                                        {{ $post->title }}</a>
+                                        {{ $post->title }}
+                                    </a>
                                 </li>
                             @endforeach
-                        </ul>
-                    </div>
+                        @endslot
+                    </x-card>
                 </div>
 
                 <div class="row mt-2">
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Most active</h5>
-                            <h6 class="card-subtitle text-muted mt-2">Users with most posts writen</h6>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach ($mostActive as $user)
-                                <li class="list-group-item text-truncate fw-semibold">{{ $user->name }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    <x-card :items="collect($mostActive)->pluck('name')" title="Most active users" subtitle="Users with most posts writen">
+                    </x-card>
                 </div>
 
                 <div class="row mt-2">
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Most active last month</h5>
-                            <h6 class="card-subtitle text-muted mt-2">Users with most posts writen last month</h6>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach ($mostActiveLastMonth as $user)
-                                <li class="list-group-item text-truncate fw-semibold">{{ $user->name }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    <x-card :items="collect($mostActive)->pluck('name')" title="Most active last month"
+                        subtitle="Users with most posts writen last month">
+                    </x-card>
                 </div>
             </div>
         </div>
