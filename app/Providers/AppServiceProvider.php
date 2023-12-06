@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Blade;
+use App\View\Composers\ActivityComposer;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider {
@@ -17,5 +17,6 @@ class AppServiceProvider extends ServiceProvider {
      */
     public function boot(): void {
         // Blade::component('components.badge', 'badge');
+        view()->composer(['posts.index', 'posts.show'], ActivityComposer::class);
     }
 }

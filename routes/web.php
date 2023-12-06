@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutContoller;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostTagController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,8 +45,10 @@ Route::resource('posts', PostController::class)
 // If no 'days_age' is provided, default to 20
 // Set the route name as 'posts.recent.index'
 Route::get('/recent-posts/{days_age?}', function ($daysAgo = 20) {
-    return 'Post from ' . $daysAgo . ' days ago';
+    return 'Post from '.$daysAgo.' days ago';
 })->name('posts.recent.index');
+
+Route::get('/posts/tag/{tag}', [PostTagController::class, 'index'])->name('posts.tags.index');
 
 // Enable authentication routes (login, register, etc.)
 Auth::routes();

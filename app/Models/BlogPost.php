@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 class BlogPost extends Model {
 
     // protected $fillable = ['title', 'content'];
@@ -30,6 +31,10 @@ class BlogPost extends Model {
         return $this->belongsTo(User::class);
     }
 
+    public function tags() {
+        return $this->belongsToMany(Tag::class)->withTimestamps();
+    }
+
     public function scopeLatest(Builder $query) {
         return $query->orderByDesc(static::CREATED_AT);
     }
@@ -44,7 +49,6 @@ class BlogPost extends Model {
         static::addGlobalScope(new DeletedAdminScope());
 
         parent::boot();
-
 
         static::deleting(function (BlogPost $blogPost) {
             $blogPost->comments()->delete();

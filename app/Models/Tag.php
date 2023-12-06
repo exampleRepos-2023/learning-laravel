@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-
-class Author extends Model {
+class Tag extends Model {
     use HasFactory;
 
-    public function profile() {
-        return $this->hasOne(Profile::class);
+    public function blogPosts() {
+        return $this->belongsToMany(BlogPost::class)->withTimestamps()->as('tagged');
     }
 }

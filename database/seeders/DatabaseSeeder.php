@@ -7,6 +7,7 @@ use App\Models\Author;
 use App\Models\BlogPost;
 use App\Models\Comment;
 use App\Models\Profile;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
@@ -28,7 +29,7 @@ class DatabaseSeeder extends Seeder {
         // Author::factory(1)->create();
         // $posts = BlogPost::factory(20)->has(Comment::factory($commentCount))->create();
 
-        if ($this->command->confirm('Do you want to refresh the database?', true)) {
+        if($this->command->confirm('Do you want to refresh the database?', true)) {
             $this->command->call('migrate:refresh');
             $this->command->info('Database was refreshed!');
         }
@@ -50,5 +51,11 @@ class DatabaseSeeder extends Seeder {
             $comment->blog_post_id = $posts->random()->id;
             $comment->save();
         });
+
+
+        $this->call([
+            TagsTableSeeder::class,
+            BlogPostTagTableSeeder::class
+        ]);
     }
 }
