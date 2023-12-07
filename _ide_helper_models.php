@@ -75,7 +75,9 @@ namespace App\Models{
  * @property string $content
  * @property int $blog_post_id
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int $user_id
  * @property-read \App\Models\BlogPost $blogPost
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Comment latest()
  * @method static \Illuminate\Database\Eloquent\Builder|Comment newModelQuery()
@@ -88,6 +90,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Comment withoutTrashed()
  */
@@ -151,6 +154,8 @@ namespace App\Models{
  * @property int $is_admin
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BlogPost> $blogPosts
  * @property-read int|null $blog_posts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
+ * @property-read int|null $comments_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens

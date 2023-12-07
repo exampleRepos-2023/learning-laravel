@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutContoller;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostTagController;
 use Illuminate\Support\Facades\Route;
@@ -36,19 +37,21 @@ Route::get('/secret', [HomeController::class, 'secret'])
 // Define a route for the about page with the AboutController as the callback function
 Route::get('/about', AboutContoller::class);
 
-// Define a resourceful route group for the 'posts' resource (index, show, create, store, edit, update, destroy)
-Route::resource('posts', PostController::class)
-    ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
+// Define a resourceful route group for the 'posts' resource
+Route::resource('posts', PostController::class);
 
 // Define a route for the 'recent-posts' page with an optional 'days_age' parameter
 // The callback function returns a string indicating the number of days ago
 // If no 'days_age' is provided, default to 20
 // Set the route name as 'posts.recent.index'
 Route::get('/recent-posts/{days_age?}', function ($daysAgo = 20) {
-    return 'Post from '.$daysAgo.' days ago';
+    return 'Post from ' . $daysAgo . ' days ago';
 })->name('posts.recent.index');
 
 Route::get('/posts/tag/{tag}', [PostTagController::class, 'index'])->name('posts.tags.index');
+
+Route::resource('posts.comments', PostCommentController::class)
+    ->only(['store']);
 
 // Enable authentication routes (login, register, etc.)
 Auth::routes();

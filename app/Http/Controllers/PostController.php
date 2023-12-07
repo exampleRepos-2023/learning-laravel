@@ -30,9 +30,7 @@ class PostController extends Controller {
     public function index() {
 
         return view('posts.index', [
-            'posts' => BlogPost::withCount('comments')
-                ->with('user')->with('tags')
-                ->latest()->get(),
+            'posts' => BlogPost::latestWithRelations()->get(),
         ]);
     }
 
@@ -65,9 +63,7 @@ class PostController extends Controller {
     public function show(string $id) {
         $blogPost = Cache::tags(['blog-post'])
             ->remember("blog-post-{$id}", 60, function () use ($id) {
-                return BlogPost::with('comments')
-                    ->with('tags')
-                    ->with('user')
+                return BlogPost::with('comments', 'tags', 'user', 'comments.user')
                     ->findOrFail($id);
             });
 
@@ -80,15 +76,15 @@ class PostController extends Controller {
         $diffrence = 0;
         $now = now();
 
-        foreach($users as $session => $lastVisit) {
-            if($now->diffInMinutes($lastVisit) >= 1) {
+        foreach ($users as $session => $lastVisit) {
+            if ($now->diffInMinutes($lastVisit) >= 1) {
                 $diffrence--;
             } else {
                 $usersUpdate[$session] = $lastVisit;
             }
         }
 
-        if(
+        if (
             !array_key_exists($sessionId, $users)
             || $now->diffInMinutes($users[$sessionId]) >= 1
         ) {
@@ -98,7 +94,7 @@ class PostController extends Controller {
         $usersUpdate[$sessionId] = $now;
         Cache::tags(['blog-post'])->forever($usersKey, $usersUpdate);
 
-        if(!Cache::has($counterKey)) {
+        if (!Cache::has($counterKey)) {
             Cache::tags(['blog-post'])->forever($counterKey, 1);
         } else {
             Cache::tags(['blog-post'])->increment($counterKey, $diffrence);
@@ -130,7 +126,7 @@ class PostController extends Controller {
     public function update(StorePost $request, string $id) {
         $post = BlogPost::findOrFail($id);
 
-        if(Gate::denies('update', $post)) {
+        if (Gate::denies('update', $post)) {
             abort(403, 'You cant update this blog post!');
         }
 

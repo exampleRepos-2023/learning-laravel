@@ -45,6 +45,13 @@ class BlogPost extends Model {
             ->orderByDesc('comments_count');
     }
 
+    public function scopeLatestWithRelations(Builder $query) {
+        return $query
+            ->latest()
+            ->withCount('comments')
+            ->with('user', 'tags');
+    }
+
     public static function boot() {
         static::addGlobalScope(new DeletedAdminScope());
 
@@ -52,12 +59,13 @@ class BlogPost extends Model {
 
         static::deleting(function (BlogPost $blogPost) {
             $blogPost->comments()->delete();
+            Cache::tags(['blog-post'])->forget("blog-post-{$blogPost->id}");
         });
 
         // Listen for the 'updating' event on the 'BlogPost' model
         // Clear the cache for the specific blog post
         static::updating(function (BlogPost $blogPost) {
-            Cache::forget("blog-post-{$blogPost->id}");
+            Cache::tags(['blog-post'])->forget("blog-post-{$blogPost->id}");
         });
 
         static::restoring(function (BlogPost $blogPost) {
