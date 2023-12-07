@@ -13,4 +13,9 @@
     <textarea class="form-control" id="content" name="content">{{ old('content', optional($post ?? null)->content) }}</textarea>
 </div>
 
+<div class="row">
+    <label>Thumbnail</label>
+    <input class="form-control" type="file" name="thumbnail" />
+</div>
+
 <x-errors />

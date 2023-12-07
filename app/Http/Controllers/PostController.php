@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePost;
-use App\Models\BlogPost;
-use App\Models\User;
 use Gate;
+use App\Models\User;
+use App\Models\Image;
+use App\Models\BlogPost;
+use App\Http\Requests\StorePost;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
-class PostController extends Controller {
-
-
+class PostController extends Controller
+{
     /**
      * Construct a new instance of the class.
      *
@@ -20,14 +21,16 @@ class PostController extends Controller {
      * create, store, edit, update, and destroy.
      * The 'auth' middleware ensures that the user is authenticated before accessing these actions.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth')
             ->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index()
+    {
 
         return view('posts.index', [
             'posts' => BlogPost::latestWithRelations()->get(),
@@ -38,21 +41,30 @@ class PostController extends Controller {
     /**
      * Show the form for creating a new resource.
      */
-    public function create() {
+    public function create()
+    {
         return view('posts.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePost $request) {
+    public function store(StorePost $request)
+    {
 
-        $validatedData = $request->validated();
+        $validatedData            = $request->validated();
         $validatedData['user_id'] = $request->user()->id;
+        $post                     = BlogPost::create($validatedData);
 
-        $post = BlogPost::create($validatedData);
+        // save image to storage
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')
+                ->store('thumbnails', 'public');
+            $post->image()->save(Image::create(['path' => $path]));
+        }
 
-        $request->session()->flash('status', 'The blog post was created!');
+
+        session()->flash('status', 'The blog post was created!');
 
         return redirect()->route('posts.show', ['post' => $post->id]);
     }
@@ -60,21 +72,22 @@ class PostController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {
+    public function show(string $id)
+    {
         $blogPost = Cache::tags(['blog-post'])
             ->remember("blog-post-{$id}", 60, function () use ($id) {
                 return BlogPost::with('comments', 'tags', 'user', 'comments.user')
                     ->findOrFail($id);
             });
 
-        $sessionId = session()->getId();
+        $sessionId  = session()->getId();
         $counterKey = "blog-post-{$id}-counter";
-        $usersKey = "blog-post-{$id}-users";
+        $usersKey   = "blog-post-{$id}-users";
 
-        $users = Cache::tags(['blog-post'])->get($usersKey, []);
+        $users       = Cache::tags(['blog-post'])->get($usersKey, []);
         $usersUpdate = [];
-        $diffrence = 0;
-        $now = now();
+        $diffrence   = 0;
+        $now         = now();
 
         foreach ($users as $session => $lastVisit) {
             if ($now->diffInMinutes($lastVisit) >= 1) {
@@ -108,7 +121,8 @@ class PostController extends Controller {
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id) {
+    public function edit(string $id)
+    {
         $post = BlogPost::findOrFail($id);
 
         $this->authorize('update', $post);
@@ -123,7 +137,8 @@ class PostController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(StorePost $request, string $id) {
+    public function update(StorePost $request, string $id)
+    {
         $post = BlogPost::findOrFail($id);
 
         if (Gate::denies('update', $post)) {
@@ -133,16 +148,31 @@ class PostController extends Controller {
         $validatedData = $request->validated();
 
         $post->fill($validatedData);
+
+        // save image to storage
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')
+                ->store('thumbnails', 'public');
+            if ($post->image) {
+                Storage::delete($post->image->path);
+                $post->image->path = $path;
+                $post->image->save();
+            } else {
+                $post->image()->save(Image::create(['path' => $path]));
+            }
+        }
+
         $post->save();
 
-        $request->session()->flash('status', 'The blog post was updated!');
+        session()->flash('status', 'The blog post was updated!');
         return redirect()->route('posts.show', ['post' => $post->id]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id) {
+    public function destroy(string $id)
+    {
         $post = BlogPost::findOrFail($id);
 
         // if (Gate::denies('delete-post', $post)) {

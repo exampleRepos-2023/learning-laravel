@@ -3,7 +3,7 @@
 @section('title', 'Create Post')
 
 @section('content')
-    <form class="d-grid gap-2" action="{{ route('posts.store') }}" method="POST">
+    <form class="d-grid gap-2" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         @include('posts._form')
