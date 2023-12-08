@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Scopes\DeletedAdminScope;
 use Cache;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Taggable;
+use App\Scopes\DeletedAdminScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class BlogPost extends Model
@@ -15,8 +16,7 @@ class BlogPost extends Model
 
     // protected $fillable = ['title', 'content'];
 
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes, Taggable;
 
     protected $fillable = [
         'title',
@@ -32,11 +32,6 @@ class BlogPost extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
     public function image()
