@@ -10,23 +10,23 @@
 </head>
 
 <body>
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-        <a href="{{ route('home.index') }}" class="my-0 me-md-auto fw-bolder text-dark text-decoration-none">
-            <h5 class="my-0 me-auto fw-bolder">Laravel Learning</h5>
+    <div class="d-flex flex-column flex-md-row align-items-center px-md-4 border-bottom mb-3 bg-white p-3 shadow-sm">
+        <a href="{{ route('home.index') }}" class="me-md-auto fw-bolder text-dark text-decoration-none my-0">
+            <h5 class="fw-bolder my-0 me-auto">Laravel Blog</h5>
         </a>
-        <nav class="my-2 my-md-0 mb-md-2">
-            <a class="p-2 text-decoration-none text-dark" href="{{ route('home.index') }}">Home</a>
-            <a class="p-2 text-decoration-none text-dark" href="{{ route('home.contact') }}">Contact</a>
-            <a class="p-2 text-decoration-none text-dark" href="{{ route('posts.index') }}">Blog Posts</a>
-            <a class="p-2 text-decoration-none text-dark" href="{{ route('posts.create') }}">Add Post</a>
+        <nav class="my-md-0 mb-md-2 my-2">
+            <a class="text-decoration-none text-dark p-2" href="{{ route('home.index') }}">Home</a>
+            <a class="text-decoration-none text-dark p-2" href="{{ route('home.contact') }}">Contact</a>
+            <a class="text-decoration-none text-dark p-2" href="{{ route('posts.index') }}">Blog Posts</a>
+            <a class="text-decoration-none text-dark p-2" href="{{ route('posts.create') }}">Add Post</a>
 
             @guest
                 @if (Route::has('login'))
-                    <a class="p-2 text-decoration-none text-dark" href="{{ route('register') }}">Register</a>
+                    <a class="text-decoration-none text-dark p-2" href="{{ route('register') }}">Register</a>
                 @endif
-                <a class="p-2 text-decoration-none text-dark" href="{{ route('login') }}">Login</a>
+                <a class="text-decoration-none text-dark p-2" href="{{ route('login') }}">Login</a>
             @else
-                <a class="p-2 text-decoration-none text-dark" href="{{ route('logout') }}"
+                <a class="text-decoration-none text-dark p-2" href="{{ route('logout') }}"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout
                     ({{ Auth::user()->name }}) </a>
                 <form id="logout-form" action="{{ route('logout') }} "method="POST" style="display: none;">
@@ -37,7 +37,7 @@
     </div>
     <div class="container">
         @if (session('status'))
-            <div class="alert alert-success">
+            <div class="badge bg-success">
                 {{ session('status') }}
             </div>
         @endif

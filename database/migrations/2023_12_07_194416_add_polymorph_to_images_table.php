@@ -10,11 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
-            $table->id();
-            $table->string('path');
-            $table->unsignedInteger('blog_post_id')->nullable();
-            $table->timestamps();
+        Schema::table('images', function (Blueprint $table) {
+            $table->dropColumn('blog_post_id');
+
+            $table->morphs('imageable');
         });
     }
 
@@ -23,6 +22,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::table('images', function (Blueprint $table) {
+            $table->unsignedInteger('blog_post_id');
+            $table->dropMorphs('imageable');
+        });
     }
 };

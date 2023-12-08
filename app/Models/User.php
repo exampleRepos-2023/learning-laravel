@@ -9,7 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable {
+class User extends Authenticatable
+{
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -40,23 +41,32 @@ class User extends Authenticatable {
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
 
-    public function blogPosts() {
+    public function blogPosts()
+    {
         return $this->hasMany(BlogPost::class);
     }
 
-    public function comments() {
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function scopeWithMostBlogPosts(Builder $query) {
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function scopeWithMostBlogPosts(Builder $query)
+    {
         return $query->withCount('blogPosts')
             ->orderBy('blog_posts_count', 'desc');
     }
 
-    public function scopeWithMostBlogPostsLastMonth(Builder $query) {
+    public function scopeWithMostBlogPostsLastMonth(Builder $query)
+    {
         return $query->withCount(['blogPosts' => function (Builder $query) {
             $query->whereBetween(static::CREATED_AT, [now()->subMonths(3), now()]);
         }])
