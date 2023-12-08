@@ -12,11 +12,13 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 
-class DatabaseSeeder extends Seeder {
+class DatabaseSeeder extends Seeder
+{
     /**
      * Seed the application's database.
      */
-    public function run(): void {
+    public function run(): void
+    {
         $commentCount = rand(0, 4);
 
         // \App\Models\User::factory(10)->create();
@@ -25,9 +27,7 @@ class DatabaseSeeder extends Seeder {
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        // Comment::factory(1)->create(['blog_post_id' => 1]);
-        // Author::factory(1)->create();
-        // $posts = BlogPost::factory(20)->has(Comment::factory($commentCount))->create();
+
 
         if ($this->command->confirm('Do you want to refresh the database?', true)) {
             $this->command->call('migrate:refresh');
@@ -35,8 +35,6 @@ class DatabaseSeeder extends Seeder {
         }
         // clear the cache
         Cache::tags(['blog-post'])->flush();
-
-        // Author::factory(20)->has(Profile::factory())->create();
 
         User::factory()->adminNeco()->create();
         User::factory(20)->create();
@@ -47,10 +45,19 @@ class DatabaseSeeder extends Seeder {
             $post->save();
         });
 
-        $comments = Comment::factory(150)->make()
+        Comment::factory(150)->make()
             ->each(function ($comment) use ($posts, $users) {
-                $comment->blog_post_id = $posts->random()->id;
-                $comment->user_id = $users->random()->id;
+                $comment->commentable_id   = $posts->random()->id;
+                $comment->commentable_type = BlogPost::class;
+                $comment->user_id          = $users->random()->id;
+                $comment->save();
+            });
+
+        Comment::factory(150)->make()
+            ->each(function ($comment) use ($users) {
+                $comment->commentable_id   = $users->random()->id;
+                $comment->commentable_type = User::class;
+                $comment->user_id          = $users->random()->id;
                 $comment->save();
             });
 

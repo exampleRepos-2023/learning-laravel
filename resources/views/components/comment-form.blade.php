@@ -1,6 +1,6 @@
 <div class="mb-2 mt-2">
     @auth
-        <form method="POST" class="d-grid gap-2" action="{{ route('posts.comments.store', ['post' => $post->id]) }}">
+        <form method="POST" class="d-grid gap-2" action="{{ $route }}">
             @csrf
 
             <div class="row">

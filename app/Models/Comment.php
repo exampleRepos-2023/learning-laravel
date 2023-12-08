@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
 
-class Comment extends Model {
+class Comment extends Model
+{
     use HasFactory;
     use SoftDeletes;
 
@@ -19,24 +20,30 @@ class Comment extends Model {
         'content',
     ];
 
-    public function blogPost() {
-        return $this->belongsTo(BlogPost::class);
+    public function commentable()
+    {
+        return $this->morphTo();
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function scopeLatest(Builder $query) {
+    public function scopeLatest(Builder $query)
+    {
         return $query->orderByDesc(static::CREATED_AT);
     }
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
 
         static::creating(function (Comment $comment) {
-            Cache::tags(['blog-post'])->forget("blog-post-{$comment->blog_post_id}");
-            Cache::tags(['blog-post'])->forget("mostCommented");
+            if ($comment->commentable_type === BlogPost::class) {
+                Cache::tags(['blog-post'])->forget("blog-post-{$comment->commentable_id}");
+                Cache::tags(['blog-post'])->forget("mostCommented");
+            }
         });
 
         // static::addGlobalScope(new LatestScope());

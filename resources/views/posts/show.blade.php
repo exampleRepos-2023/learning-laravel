@@ -33,14 +33,10 @@
 
         <h4>Comments</h4>
 
-        @include('comments._form')
+        <x-comment-form route="{{ route('posts.comments.store', ['post' => $post->id]) }}" />
 
-        @forelse ($post->comments as $comment)
-            <p>{{ $comment->content }} </p>
-            <x-updated date="{{ $comment->created_at->diffForHumans() }}" name="{{ $comment->user->name }}"></x-updated>
-        @empty
-            <p>No comments yet!</p>
-        @endforelse
+        <x-comment-list :comments="$post->comments" />
+
     </div>
     <div class="col-4">
         @include('posts._activity')
