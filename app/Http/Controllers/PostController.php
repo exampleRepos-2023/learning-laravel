@@ -129,10 +129,6 @@ class PostController extends Controller
 
         $this->authorize('update', $post);
 
-        // if (Gate::denies('update-post', $post)) {
-        //     abort(403, 'You cant update this blog post!');
-        // }
-
         return view('posts.edit', ['post' => $post,]);
     }
 

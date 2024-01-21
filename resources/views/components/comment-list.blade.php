@@ -2,7 +2,8 @@
     <p>{{ $comment->content }} </p>
 
     <x-updated date="{{ $comment->created_at->diffForHumans() }}" name="{{ $comment->user->name }} "
-        userId="{{ $comment->user->id }}"></x-updated>
+        userId="{{ $comment->user->id }}">
+    </x-updated>
 
     <x-tags :tags="$post->tags"></x-tags>
 @empty
